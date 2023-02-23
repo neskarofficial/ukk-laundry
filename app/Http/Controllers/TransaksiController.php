@@ -3,6 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaksi;
+use App\Models\Member;
+use App\Models\Paket;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
 
 class TransaksiController extends Controller
@@ -23,9 +28,26 @@ class TransaksiController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Transaksi $transaksi, Request $request)
     {
         //
+        $transaksi = new Transaksi;
+        $transaksi->outlet_id       = Auth::user()->outlet_id;
+        $transaksi->kode_invoice    = '';
+        $transaksi->member_id       = $request->member_id;
+        $transaksi->tgl             = Carbon::now()->format('Y-m-d');
+        $transaksi->batas_waktu     = Carbon::now()->format('Y-m-d');
+        $transaksi->tgl_bayar       = Carbon::now()->format('Y-m-d');
+        $transaksi->biaya_tambahan  = 0;
+        $transaksi->diskon          = 0;
+        $transaksi->pajak           = 0;
+        $transaksi->status          = 'baru';
+        $transaksi->dibayar         = 'belum_dibayar';
+        $transaksi->users_id        = Auth::user()->id;
+        $transaksi->save();
+        // session(['id_penjualan' => $transaksi->id]);
+        // return view('transaksi.create', compact('members', 'pakets'));
+        return redirect()->route('transaksi.proses', $transaksi->id);
     }
 
     /**
