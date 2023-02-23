@@ -47,6 +47,7 @@ class TransaksiController extends Controller
         $transaksi->save();
         // session(['id_penjualan' => $transaksi->id]);
         // return view('transaksi.create', compact('members', 'pakets'));
+        $idTransaksi = $transaksi->id;
         return redirect()->route('transaksi.proses', $transaksi->id);
     }
 
@@ -81,6 +82,8 @@ class TransaksiController extends Controller
     public function edit(Transaksi $transaksi)
     {
         //
+        $pakets = Paket::all()->where('outlet_id', $transaksi->outlet_id);
+        return view('transaksi.proses', compact('pakets'));
     }
 
     /**
